@@ -1,7 +1,7 @@
 import os
 from .config import TOKEN
 from .service import SaveDocumentBot
-from ..db import User, ScanDocument, Text
+from ..db import User, Text
 
 bot_instance = SaveDocumentBot(TOKEN)
 # bot_instance = SaveDocumentBot(os.environ.get('TOKEN_KEY'))
