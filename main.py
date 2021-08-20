@@ -1,16 +1,17 @@
-# This is a sample Python script.
+from flask import Flask
+from forward_bot.bot import bot_instance
+#from forward_bot.bot import bot_app
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+#app = Flask(__name__)
+#app.register_blueprint(bot_app)
 
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+     bot_instance.polling()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # print(bot_instance.get_me())
+    # bot_instance.get_file()
+
+    #bot_instance.test_add()
+
