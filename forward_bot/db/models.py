@@ -1,12 +1,14 @@
 import mongoengine as me
 from datetime import datetime
+from .status import STATUS_OPERATION
 
-me.connect('scan_documents')
+me.connect('forward_bot')
 
 class User(me.Document):
     user_id = me.IntField(unique=True, required=True)
     name = me.StringField(max_length=255)
     telephone = me.StringField(min_length=10, max_length=12, regex='^[0-9]*$')
+    status_operation = me.StringField(required=True, choices=STATUS_OPERATION, unique=True)
 
     def __str__(self):
         return str(self.id)
@@ -20,7 +22,7 @@ class User(me.Document):
             except:
                 name = ""
 
-            user = cls.objects.create(user_id=chat.id, name=name)
+            user = cls.objects.create(user_id=chat.id, name=name, status_operation='NOT_OPERATION')
         else:
             user = user[0]
         return user
