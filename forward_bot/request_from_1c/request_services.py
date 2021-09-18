@@ -22,11 +22,8 @@ class HTTP_1C():
     def get_autentification_1c(self, user: User):
         # /{NameBot}/{User}/autentification?username=testSergiy
         url = self.URL(user, "autentification")
-        payload = {"username": User.name}
-        print(22222)
+        payload = {"username": user.name}
         r = requests.get(url, auth=(self.USER_1C, self.PASSWD_1C), params=payload)
-
-        print(r.text)
         decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
 
         return json.loads(decoded_data)

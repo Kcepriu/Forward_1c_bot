@@ -1,2 +1,2 @@
-from .models import User, Text
-from .status import STATUS_OPERATION
+from .models import User
+from .status import Status_Operation
