@@ -214,7 +214,7 @@ class Bot_1c(TeleBot):
         information_partner = contrahent_1c.get('partner')
         format_information = Bot_1c.get_formating_information_from_contrahents(information_partner)
 
-        # print(format_information)
+        print(format_information)
 
         # Інформація відсутня
         if not format_information:
