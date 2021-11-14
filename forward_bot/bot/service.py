@@ -5,6 +5,8 @@ from telebot.types import (InlineKeyboardMarkup,
                            ReplyKeyboardMarkup,
                            ReplyKeyboardRemove,
                            KeyboardButton)
+from jinja2 import Template
+
 
 from ..db import User
 from .keyboards import Keyboards
@@ -14,6 +16,7 @@ from ..request_from_1c import HTTP_1C
 from ..configs import USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADRESS
 from ..configs import Texts, Roles
 from ..db import Status_Operation
+from ..configs import TEMPLATE_INFORMATION
 
 htt_1s_services = HTTP_1C(USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADRESS)
 
@@ -57,9 +60,13 @@ class Bot_1c(TeleBot):
 
     @staticmethod
     def get_formating_information_from_contrahents(information):
-        create_text = Create_Text()
-        format_text = create_text.generete_information_from_contrahents(information)
+        # print(information)
+        # create_text = Create_Text()
+        # format_text = create_text.generete_information_from_contrahents(information)
+        tm = Template(TEMPLATE_INFORMATION)
+        format_text = tm.render(message=information)
         return format_text
+
 
     def generate_and_send_start_kb(self, user: User, message_1c):
         user.user_to_status(Status_Operation.NOT_OPERATION)
@@ -197,6 +204,7 @@ class Bot_1c(TeleBot):
                           reply_markup=kb)
 
     def start_send_information_contrahents(self, user:User, message_id, id_client, message_1c):
+        contrahent_1c = htt_1s_services.get_information_contrahent(user, id_client)
         try:
             contrahent_1c = htt_1s_services.get_information_contrahent(user, id_client)
         except:
@@ -222,7 +230,7 @@ class Bot_1c(TeleBot):
         kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CREATE_EVENT), callback_data=f'{HENDLER_EVENT}{SEPARATOR}{id_client}'))
 
         self.send_message(user.user_id, format_information,
-                          reply_markup=kb) #, parse_mode='Markdown')
+                          reply_markup=kb, parse_mode='html')
 
     def start_create_evetn(self, user:User, message_id, id_client, message_1c, format_information):
         self.send_message(user.user_id, Texts.get_body(Texts.TEXT_NOT_IMPLEMENTED),
