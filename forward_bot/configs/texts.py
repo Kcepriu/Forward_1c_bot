@@ -12,6 +12,10 @@ class Texts():
     TEXT_USER = 'TEXT_USER'
     TEXT_ASKS_AUTH = 'TEXT_ASKS_AUTH'
     TEXT_FIND_CLIENTS = 'TEXT_FIND_CLIENTS'
+    TEXT_START_CREATED_EVENT = 'TEXT_START_CREATED_EVENT'
+    TEXT_EVENT_CREATED = 'TEXT_EVENT_CREATED'
+    TEXT_EVENT_NOT_CREATED = 'TEXT_EVENT_NOT_CREATED'
+
 
     KB_BUTTON_FIND_CONTRAHENTS = 'KB_BUTTON_FIND_CONTRAHENTS'
     KB_BUTTON_FIND_TOVAR = 'KB_BUTTON_FIND_TOVAR'
@@ -33,6 +37,9 @@ class Texts():
          TEXT_USER: 'Користувач',
          TEXT_ASKS_AUTH: 'проcить авторизувати його в системі',
          TEXT_FIND_CLIENTS: 'Знайдені контрагенти:',
+         TEXT_START_CREATED_EVENT: '👇 Введіть текст події',
+         TEXT_EVENT_CREATED: 'Подію створено!',
+         TEXT_EVENT_NOT_CREATED: 'Помилка створення події',
 
          KB_BUTTON_FIND_CONTRAHENTS: '🔎 Пошук контрагента',
          KB_BUTTON_SEND_INFORMATION_CONTRAHENTS: 'Вивести інформацію про контрагнета',

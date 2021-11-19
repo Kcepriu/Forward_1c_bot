@@ -8,6 +8,7 @@ class User(me.Document):
     name = me.StringField(max_length=255)
     telephone = me.StringField(min_length=10, max_length=12, regex='^[0-9]*$')
     status_operation = me.StringField(required=True, choices=Status_Operation.TITLES_CONSTANT)
+    active_id_client = me.StringField(max_length=9)
 
     def __str__(self):
         return str(self.id)
@@ -26,8 +27,9 @@ class User(me.Document):
             user = user[0]
         return user
 
-    def user_to_status(self, status):
+    def user_to_status(self, status, active_id_client=''):
         self.status_operation = status
+        self.active_id_client = active_id_client
         self.save()
 
 

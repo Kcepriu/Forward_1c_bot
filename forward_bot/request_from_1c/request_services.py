@@ -50,6 +50,19 @@ class HTTP_1C():
         decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
         return json.loads(decoded_data)
 
+    def post_event(self, user:User, text_event):
+        # /{NameBot}/{User}/event
+
+        url = self.URL(user, "event")
+        payload = {"id": user.active_id_client}
+
+        data = {'text': text_event}
+
+        r = requests.post(url, auth=(self.USER_1C, self.PASSWD_1C), params=payload, json=data)
+
+        decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
+        return json.loads(decoded_data)
+
 
 
 

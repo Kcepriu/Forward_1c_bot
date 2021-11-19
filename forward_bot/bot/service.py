@@ -67,7 +67,6 @@ class Bot_1c(TeleBot):
         format_text = tm.render(message=information)
         return format_text
 
-
     def generate_and_send_start_kb(self, user: User, message_1c):
         user.user_to_status(Status_Operation.NOT_OPERATION)
         kb = self.generate_start_kb(user)
@@ -144,6 +143,8 @@ class Bot_1c(TeleBot):
     def process_only_message(self, user: User, message_1c, text_message):
         if user.status_operation == Status_Operation.FIND_CLIENTS:
             self.process_find_contrahents(user, message_1c, text_message)
+        elif user.status_operation == Status_Operation.CREATE_EVENT:
+            self.process_create_event(user, message_1c, text_message)
         else:
             # Не знаходиться ні в одній із операцій. сказати про це
             self.send_message(user.user_id, Texts.get_body(Texts.TEXT_NO_OPERATION),
@@ -190,6 +191,25 @@ class Bot_1c(TeleBot):
 
         self.senf_list_contrahents(user, contrahents)
 
+    def process_create_event(self, user: User, message_1c, text_message):
+        # Треба перевірити чи є права, якщо є то знайти контрагентів і вивести їх і вивести знову стартову клаву
+        # Якщо прав нема, то написати це і висести стартову клаву
+        if not Bot_1c.there_is_role(message_1c.get('Role'), Roles.FINDS_CONTRAHENTS):
+            self.send_message(user.user_id, Texts.get_body(Texts.NO_ACCESS),
+                              reply_markup=ReplyKeyboardRemove())
+            return
+        try:
+            result = htt_1s_services.post_event(user, text_message)
+        except:
+            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            return
+
+        if not result.get('ЕventСreated', False):
+            self.send_message(user.user_id, Texts.get_body(Texts.TEXT_EVENT_NOT_CREATED))
+            return
+
+        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_EVENT_CREATED))
+
     def senf_list_contrahents(self, user: User, contrahents):
         kb = InlineKeyboardMarkup(row_width=1)
         buttons = []
@@ -214,7 +234,7 @@ class Bot_1c(TeleBot):
         information_partner = contrahent_1c.get('partner')
         format_information = Bot_1c.get_formating_information_from_contrahents(information_partner)
 
-        print(format_information)
+        #print(format_information)
 
         # Інформація відсутня
         if not format_information:
@@ -232,10 +252,11 @@ class Bot_1c(TeleBot):
         self.send_message(user.user_id, format_information,
                           reply_markup=kb, parse_mode='html')
 
-    def start_create_evetn(self, user:User, message_id, id_client, message_1c, format_information):
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_NOT_IMPLEMENTED),
+    def start_create_evetn(self, user:User, message_id, id_client, message_1c):
+        user.user_to_status(Status_Operation.CREATE_EVENT, id_client)
+        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_START_CREATED_EVENT),
                           reply_markup=ReplyKeyboardRemove())
-        self.generate_and_send_start_kb(user, message_1c)
+
 
 
 if __name__ == '__main__':

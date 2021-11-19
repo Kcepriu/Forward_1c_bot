@@ -63,6 +63,7 @@ def only_message(message):
     message_1c = bot_instance.autentification(user)
     if not message_1c:
         return
+
     bot_instance.process_only_message(user, message_1c, message.text)
 
     bot_instance.generate_and_send_start_kb(user, message_1c)
