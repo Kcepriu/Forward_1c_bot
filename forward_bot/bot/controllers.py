@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .config import WEBHOOK_PRIFIX
+from ..configs import WEBHOOK_PRIFIX
 from .hendlers import bot_instance
 
 from flask import request, abort
