@@ -4,6 +4,7 @@ class Texts():
     NO_ACCESS = 'NO_ACCESS'
     NO_FIND_RESULT = 'NO_FIND_RESULT'
     NO_FIND_INFORMATION = 'NO_FIND_INFORMATION'
+    NO_FIND_EVENTS = 'NO_FIND_EVENTS'
     TEXT_START = 'TEXT_START'
     TEXT_START_FIND_CONTRAHENTS = 'TEXT_START_FIND_CONTRAHENTS'
     TEXT_NO_OPERATION = 'TEXT_NO_OPERATION'
@@ -23,12 +24,15 @@ class Texts():
 
     KB_BUTTON_SEND_ADM = 'KB_BUTTON_SEND_ADM'
     KB_BUTTON_CREATE_EVENT = 'KB_BUTTON_CREATE_EVENT'
+    KB_BUTTON_CONTRAHENT_GET_EVENT = 'KB_BUTTON_CONTRAHENT_GET_EVENT'
+    KB_BUTTON_COMPANY_GET_EVENT = 'KB_BUTTON_COMPANY_GET_EVENT'
 
     TITLES_CONSTANT = {NO_CONNECT: 'Не вдалося зʼєднатися з 1с',
          NO_AUTH: 'Про вас відсутні дані в 1с. Зверніться до адміністратора',
          NO_ACCESS: 'У вас бракує прав для такої операції',
          NO_FIND_RESULT: 'Не знайдено жодного контрагента з такою назвою',
          NO_FIND_INFORMATION: 'Дані про контрагента відсутні',
+         NO_FIND_EVENTS: 'Подій не знайдено',
          TEXT_START: 'Виберіть потрібну операцію, натиснувши відповідну кнопку 👇',
          TEXT_START_FIND_CONTRAHENTS: '👇 Введіть назву контрагента, і відправте повідомлення',
          TEXT_NO_OPERATION: 'Не вірна команда',
@@ -45,6 +49,8 @@ class Texts():
          KB_BUTTON_SEND_INFORMATION_CONTRAHENTS: 'Вивести інформацію про контрагнета',
          KB_BUTTON_FIND_TOVAR: '🔎 Пошук номенклатури',
          KB_BUTTON_CREATE_EVENT: 'Створити подію',
+         KB_BUTTON_CONTRAHENT_GET_EVENT: 'Отримати події контрагента',
+         KB_BUTTON_COMPANY_GET_EVENT: 'Отримати події компанії',
 
          KB_BUTTON_SEND_ADM: 'Відправити запит адміністратору'}
 

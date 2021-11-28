@@ -18,3 +18,11 @@ TEMPLATE_INFORMATION = '''
 <strong>Контактна інформація:</strong>
    {{ contact_information(contact_person['contacts']) }}
 {% endfor %}'''
+
+TEMPLATE_EVENTS = ''' 
+<strong>Дата:</strong> {{message.date}}
+<strong>Менеджер контрагента:</strong> {{message.manager}}
+<strong>Контакна особа:</strong> {{message.contact_name}}
+<strong>Текст події:</strong>
+{{message.text_event}}
+'''

@@ -25,6 +25,7 @@ class HTTP_1C():
         payload = {"username": user.name}
         r = requests.get(url, auth=(self.USER_1C, self.PASSWD_1C), params=payload)
         decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
+        print(decoded_data)
 
         return json.loads(decoded_data)
 
@@ -59,6 +60,17 @@ class HTTP_1C():
         data = {'text': text_event}
 
         r = requests.post(url, auth=(self.USER_1C, self.PASSWD_1C), params=payload, json=data)
+
+        decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
+        return json.loads(decoded_data)
+
+    def get_events(self, user: User, id_contrahents, company):
+        # /{NameBot}/{User}/contrahens?id=000053338&username=testSergiy
+
+        url = self.URL(user, "event")
+        payload = {"company": company, "id": id_contrahents}
+
+        r = requests.get(url, auth=(self.USER_1C, self.PASSWD_1C), params=payload)
 
         decoded_data = codecs.decode(r.text.encode(), 'utf-8-sig')
         return json.loads(decoded_data)

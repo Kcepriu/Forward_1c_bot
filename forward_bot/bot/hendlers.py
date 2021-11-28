@@ -2,7 +2,11 @@ from ..configs import TOKEN
 from .service import Bot_1c
 from ..db import User
 from .keyboards import Keyboards
-from .lookups import SEPARATOR, HENDLER_CONTRAHENTS, HENDLER_EVENT
+from .lookups import (SEPARATOR,
+                      HENDLER_CONTRAHENTS,
+                      HENDLER_EVENT,
+                      HENDLER_CONTRAHENT_GET_EVENT,
+                      HENDLER_COMPANY_GET_EVENT)
 
 bot_instance = Bot_1c(TOKEN)
 
@@ -68,7 +72,7 @@ def only_message(message):
 
     bot_instance.generate_and_send_start_kb(user, message_1c)
 
-
+#  Тикнули по кнопці контрагента
 @bot_instance.callback_query_handler(func=lambda call: call.data.split(SEPARATOR)[0] == HENDLER_CONTRAHENTS)
 def clic_contrahents(call):
     user = User.get_user(chat=call.message.chat)
@@ -80,7 +84,7 @@ def clic_contrahents(call):
     id_client = call.data.split(SEPARATOR)[1]
     bot_instance.start_send_information_contrahents(user, call.message.message_id, id_client, message_1c)
 
-
+# створити подію
 @bot_instance.callback_query_handler(func=lambda call: call.data.split(SEPARATOR)[0] == HENDLER_EVENT)
 def clic_contrahents(call):
     user = User.get_user(chat=call.message.chat)
@@ -92,3 +96,29 @@ def clic_contrahents(call):
     id_client = call.data.split(SEPARATOR)[1]
     bot_instance.start_create_evetn(user, call.message.message_id, id_client, message_1c)
 
+#  Отримати події контрагента
+@bot_instance.callback_query_handler(func=lambda call: call.data.split(SEPARATOR)[0] == HENDLER_CONTRAHENT_GET_EVENT)
+def clic_contrahents(call):
+    user = User.get_user(chat=call.message.chat)
+    # в message_1c зберігаються ролі користувача і список адимінів бота, куди можна відправляти запроси на авторизацію
+    message_1c = bot_instance.autentification(user)
+    if not message_1c:
+        return
+
+    id_client = call.data.split(SEPARATOR)[1]
+    bot_instance.start_send_information_event_contrahents(user, call.message.message_id,
+                                                          id_client, message_1c, company = False)
+
+#  Отримати події компанії
+@bot_instance.callback_query_handler(func=lambda call: call.data.split(SEPARATOR)[0] == HENDLER_COMPANY_GET_EVENT)
+def clic_contrahents(call):
+    user = User.get_user(chat=call.message.chat)
+    # в message_1c зберігаються ролі користувача і список адимінів бота, куди можна відправляти запроси на авторизацію
+    message_1c = bot_instance.autentification(user)
+    if not message_1c:
+        return
+
+    id_client = call.data.split(SEPARATOR)[1]
+    print(id_client)
+    bot_instance.start_send_information_event_contrahents(user, call.message.message_id,
+                                                          id_client, message_1c, company = True)

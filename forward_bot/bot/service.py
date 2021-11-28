@@ -10,13 +10,17 @@ from jinja2 import Template
 
 from ..db import User
 from .keyboards import Keyboards
-from .lookups import SEPARATOR, HENDLER_CONTRAHENTS,HENDLER_EVENT
+from .lookups import (SEPARATOR,
+                      HENDLER_CONTRAHENTS,
+                      HENDLER_EVENT,
+                      HENDLER_CONTRAHENT_GET_EVENT,
+                      HENDLER_COMPANY_GET_EVENT)
 
 from ..request_from_1c import HTTP_1C
 from ..configs import USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADRESS
 from ..configs import Texts, Roles
 from ..db import Status_Operation
-from ..configs import TEMPLATE_INFORMATION
+from ..configs import TEMPLATE_INFORMATION, TEMPLATE_EVENTS
 
 htt_1s_services = HTTP_1C(USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADRESS)
 
@@ -60,10 +64,13 @@ class Bot_1c(TeleBot):
 
     @staticmethod
     def get_formating_information_from_contrahents(information):
-        # print(information)
-        # create_text = Create_Text()
-        # format_text = create_text.generete_information_from_contrahents(information)
         tm = Template(TEMPLATE_INFORMATION)
+        format_text = tm.render(message=information)
+        return format_text
+
+    @staticmethod
+    def get_formating_information_from_events(information):
+        tm = Template(TEMPLATE_EVENTS)
         format_text = tm.render(message=information)
         return format_text
 
@@ -224,7 +231,6 @@ class Bot_1c(TeleBot):
                           reply_markup=kb)
 
     def start_send_information_contrahents(self, user:User, message_id, id_client, message_1c):
-        contrahent_1c = htt_1s_services.get_information_contrahent(user, id_client)
         try:
             contrahent_1c = htt_1s_services.get_information_contrahent(user, id_client)
         except:
@@ -233,8 +239,6 @@ class Bot_1c(TeleBot):
 
         information_partner = contrahent_1c.get('partner')
         format_information = Bot_1c.get_formating_information_from_contrahents(information_partner)
-
-        #print(format_information)
 
         # Інформація відсутня
         if not format_information:
@@ -246,8 +250,15 @@ class Bot_1c(TeleBot):
         self.send_information_contrahents(user, message_id, id_client, message_1c, format_information)
 
     def send_information_contrahents(self, user:User, message_id, id_client, message_1c, format_information):
-        kb = InlineKeyboardMarkup(row_width=1)
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CREATE_EVENT), callback_data=f'{HENDLER_EVENT}{SEPARATOR}{id_client}'))
+        kb = InlineKeyboardMarkup(row_width=2)
+
+        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CONTRAHENT_GET_EVENT),
+                                    callback_data=f'{HENDLER_CONTRAHENT_GET_EVENT}{SEPARATOR}{id_client}'))
+        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_COMPANY_GET_EVENT),
+                                    callback_data=f'{HENDLER_COMPANY_GET_EVENT}{SEPARATOR}{id_client}'))
+
+        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CREATE_EVENT),
+                                    callback_data=f'{HENDLER_EVENT}{SEPARATOR}{id_client}'))
 
         self.send_message(user.user_id, format_information,
                           reply_markup=kb, parse_mode='html')
@@ -256,6 +267,30 @@ class Bot_1c(TeleBot):
         user.user_to_status(Status_Operation.CREATE_EVENT, id_client)
         self.send_message(user.user_id, Texts.get_body(Texts.TEXT_START_CREATED_EVENT),
                           reply_markup=ReplyKeyboardRemove())
+
+    def start_send_information_event_contrahents(self, user:User, message_id, id_client, message_1c, company=False):
+        print(111)
+        events_1c = htt_1s_services.get_events(user, id_client, company)
+        try:
+            events_1c = htt_1s_services.get_events(user, id_client, company)
+        except:
+            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            return
+
+        information_events = events_1c.get('events')
+
+        # Інформація відсутня
+        if not information_events:
+            self.send_message(user.user_id, Texts.get_body(Texts.NO_FIND_EVENTS),
+                              reply_markup=ReplyKeyboardRemove())
+            self.generate_and_send_start_kb(user, message_1c)
+            return
+
+        for event in information_events:
+            format_information = Bot_1c.get_formating_information_from_events(event)
+            self.send_message(user.user_id, format_information, parse_mode='html')
+
+
 
 
 
