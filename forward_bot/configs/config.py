@@ -3,7 +3,7 @@ import os
 TOKEN = os.environ.get('TOKEN_KEY_FORWARD')
 NAME_BOT = 'forward_1c_bot'
 NAME_SERVER ='172.30.222.101'
-ADDITIONAL_ADRESS = "/test7/hs/bot1c/"
+ADDITIONAL_ADRESS = "Test7/hs/bot1c"
 
 USER_1C = 'Robot'
 PASSWD_1C = '7539514565'

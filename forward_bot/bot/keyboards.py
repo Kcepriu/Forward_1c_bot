@@ -6,8 +6,8 @@ class Keyboards():
     SEND_ADMIN = 'SEND_ADMIN'
 
     START_KB_AUTH = {
-        FIND_CONTRAHENTS:   Texts.get_body(Texts.KB_BUTTON_FIND_CONTRAHENTS), #Пошук контрагентів
-        FIND_TOVAR:   Texts.get_body(Texts.KB_BUTTON_FIND_TOVAR) #Пошук номенклатури
+        FIND_CONTRAHENTS:   Texts.get_body(Texts.KB_BUTTON_FIND_CONTRAHENTS) #Пошук контрагентів
+        # , FIND_TOVAR:   Texts.get_body(Texts.KB_BUTTON_FIND_TOVAR) #Пошук номенклатури
         }
 
 
