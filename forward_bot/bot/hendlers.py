@@ -118,6 +118,7 @@ def clic_get_events_all(call):
 
     id_client = call.data.split(SEPARATOR)[1]
     bot_instance.start_send_information_event_contrahents(user, id_client, call.message.message_id, company = True)
+
     contrahents = {id_client: Contrahents.get_contrahent(id_client)}
     bot_instance.senf_list_contrahents(user, contrahents)
 

@@ -31,7 +31,6 @@ class Bot1c(TeleBot):
     def get_formating_information_from_contrahents(information):
         tm = Template(TEMPLATE_INFORMATION)
         format_text = tm.render(message=information)
-        print(type(format_text))
         return format_text
 
     @staticmethod
@@ -39,6 +38,20 @@ class Bot1c(TeleBot):
         tm = Template(TEMPLATE_EVENTS)
         format_text = tm.render(message=information)
         return format_text
+
+    @staticmethod
+    def split_formating_information(format_text):
+        list_str = []
+        while format_text:
+            if len(format_text) < 4096:
+                list_str.append(format_text)
+                format_text = ''
+            else:
+                index = format_text.rindex('\n', 0, 4096)
+                list_str.append(format_text[:index])
+                format_text = format_text[index:]
+
+        return list_str
 
     def generate_and_send_start_kb(self, user: User):
         user.user_to_status(Status_Operation.NOT_OPERATION)
@@ -236,7 +249,7 @@ class Bot1c(TeleBot):
 
         self.send_information_contrahents(user, id_client, format_information)
 
-    def send_information_contrahents(self, user: User, id_client, format_information):
+    def generate_keyboard_contrahent(self, id_client):
         kb = InlineKeyboardMarkup(row_width=2)
 
         kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CONTRAHENT_GET_EVENT),
@@ -246,8 +259,14 @@ class Bot1c(TeleBot):
 
         kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CREATE_EVENT),
                                     callback_data=f'{HENDLER_EVENT}{SEPARATOR}{id_client}'))
+        return kb
 
-        self.send_message(user.user_id, format_information,  parse_mode='html')
+    def send_information_contrahents(self, user: User, id_client, format_information):
+        kb = self.generate_keyboard_contrahent(id_client)
+
+        list_information = self.split_formating_information(format_information)
+        for elem in list_information:
+            self.send_message(user.user_id, elem,  parse_mode='html')
 
         self.send_message(user.user_id, Texts.get_body(Texts.TEXT_OPERATION_FROM_CONTRAHENTS), reply_markup=kb)
 

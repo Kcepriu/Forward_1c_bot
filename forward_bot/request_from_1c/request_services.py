@@ -27,7 +27,7 @@ class HTTP_1C:
 
         return json.loads(decoded_data)
 
-    #Запит на пушук контрагента в 1с
+    #Запит на пошук контрагента в 1с
     def get_find_contrahents(self, user: User, name_contrahent):
         #/{NameBot}/{User}/contrahens?name=веранда
 
