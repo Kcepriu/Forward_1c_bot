@@ -1,2 +1,2 @@
-class Roles():
+class Roles:
     FINDS_CONTRAHENTS = '_1'

@@ -1,2 +1,2 @@
-from .models import User, Contrahents
-from .status import Status_Operation
+from .models import User, Partners
+from .status import StatusOperation

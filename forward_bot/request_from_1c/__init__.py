@@ -1,1 +1,1 @@
-from .request_services import HTTP_1C
+from .request_services import Http1c

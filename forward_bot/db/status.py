@@ -1,10 +1,8 @@
-
-class Status_Operation():
+class StatusOperation:
     NOT_OPERATION = 'NOT_OPERATION'
     FIND_CLIENTS = 'FIND_CLIENTS'
     CREATE_EVENT = 'CREATE_EVENT'
     CHOICE_CONTACT_PERSON = 'CHOICE_CONTACT_PERSON'
-
 
     TITLES_CONSTANT = (
        (NOT_OPERATION, 'not operation'),
@@ -12,6 +10,3 @@ class Status_Operation():
        (CREATE_EVENT, 'create_event'),
        (CHOICE_CONTACT_PERSON, 'choice_contact_person')
     )
-
-
-
