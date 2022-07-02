@@ -1,55 +1,49 @@
 from ..configs import TOKEN
 from .service import Bot1c
 from ..db import Partners
-from .keyboards import Keyboards
+from .buttons import Buttons
 from .lookups import *
 
 bot_instance = Bot1c(TOKEN)
+all_buttons = Buttons()
 
 
-# Команда START
+# Command START
 @bot_instance.message_handler(content_types=['text'], commands=['start'])
 def start(message):
     user = bot_instance.start_authentication(message.chat)
     if not user:
         return
-
     bot_instance.generate_and_send_start_kb(user)
 
 
-# Натиснули пощук контрагента
+# pressed the button FIND_PARTNERS
 @bot_instance.message_handler(content_types=['text'],
-                              func=lambda m: m.text == Keyboards.START_KB_AUTH[Keyboards.FIND_PARTNERS])
+                              func=lambda m: m.text == all_buttons(all_buttons.FIND_PARTNERS))
 def start_find_clients(message):
     user = bot_instance.start_authentication(message.chat)
     if not user:
         return
-
     bot_instance.send_start_find_clients(user)
 
 
-# # Натиснули пощук Номенклатури
-# @bot_instance.message_handler(content_types=['text'],
-#                               func=lambda m: m.text == Keyboards.START_KB_AUTH[Keyboards.FIND_TOVAR])
-# def start_find_tovar(message):
-#     user = User.get_user(chat=message.chat)
-#     # в message_1c зберігаються ролі користувача і список адимінів бота, куди можна відправляти запроси на авторизацію
-#     try:
-#         bot_instance.authentication(user)
-#     except NoAuthentication:
-#         return
-#
-#     bot_instance.send_start_find_tovar(user, message_1c)
+# pressed the button QR_DOCUMENTS
+@bot_instance.message_handler(content_types=['text'],
+                              func=lambda m: m.text == all_buttons(all_buttons.QR_DOCUMENTS))
+def start_find_clients(message):
+    user = bot_instance.start_authentication(message.chat)
+    if not user:
+        return
+    bot_instance.send_start_qr_documents(user)
 
 
 # Натиснули відправити запит адміну
 @bot_instance.message_handler(content_types=['text'],
-                              func=lambda m: m.text == Keyboards.START_KB_NO_AUTH[Keyboards.SEND_ADMIN])
+                              func=lambda m: m.text == all_buttons(all_buttons.SEND_ADMIN))
 def start_send_admin_message(message):
     user = bot_instance.start_authentication(message.chat, get_only_info=True)
     if not user:
         return
-
     bot_instance.start_send_admin_message(user)
 
 
@@ -59,7 +53,6 @@ def only_message(message):
     user = bot_instance.start_authentication(message.chat)
     if not user:
         return
-
     if bot_instance.process_only_message(user, message.text):
         bot_instance.generate_and_send_start_kb(user)
 
@@ -70,7 +63,6 @@ def clic_partners(call):
     user = bot_instance.start_authentication(call.message.chat)
     if not user:
         return
-
     id_client = call.data.split(SEPARATOR)[1]
     bot_instance.start_send_information_partners(user, id_client, call.message.message_id)
 
@@ -125,3 +117,13 @@ def clic_contact_person(call):
     id_contact_person = call.data.split(SEPARATOR)[2]
 
     bot_instance.clic_contact_person(user, id_client, id_contact_person, call.message.message_id)
+
+
+@bot_instance.message_handler(content_types=['photo'])
+def get_image(message):
+    user = bot_instance.start_authentication(message.chat)
+    if not user:
+        return
+
+    bot_instance.start_qr_processing(user, message)
+

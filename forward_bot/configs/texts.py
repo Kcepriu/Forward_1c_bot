@@ -18,6 +18,7 @@ class Texts:
     TEXT_EVENT_NOT_CREATED = 'TEXT_EVENT_NOT_CREATED'
     TEXT_CHOICE_CONTACT_PERSON = 'TEXT_CHOICE_CONTACT_PERSON'
     TEXT_OPERATION_FROM_PARTNERS = 'TEXT_OPERATION_FROM_PARTNERS'
+    TEXT_SEND_QR_IMAGE = 'TEXT_SEND_QR_IMAGE'
 
     KB_BUTTON_FIND_PARTNERS = 'KB_BUTTON_FIND_PARTNERS'
     KB_BUTTON_FIND_PRODUCT = 'KB_BUTTON_FIND_PRODUCT'
@@ -29,6 +30,7 @@ class Texts:
     KB_BUTTON_COMPANY_GET_EVENT = 'KB_BUTTON_COMPANY_GET_EVENT'
     KB_BUTTON_CONTACT_PERSON_CANCELED = 'KB_BUTTON_CONTACT_PERSON_CANCELED'
     KB_BUTTON_CONTACT_PERSON_NO = 'KB_BUTTON_CONTACT_PERSON_NO'
+    KB_BUTTON_QR_DOCUMENTS = 'KB_BUTTON_QR_DOCUMENTS'
 
     TITLES_CONSTANT = {NO_CONNECT: 'Не вдалося зʼєднатися з 1с',
                        NO_AUTH: 'Про вас відсутні дані в 1с. Зверніться до адміністратора',
@@ -49,6 +51,7 @@ class Texts:
                        TEXT_EVENT_NOT_CREATED: 'Помилка створення події',
                        TEXT_CHOICE_CONTACT_PERSON: '👇 Виберіть контактну особу, для створення події',
                        TEXT_OPERATION_FROM_PARTNERS: 'Операції з контрагентом:',
+                       TEXT_SEND_QR_IMAGE: 'Відправте QR код видаткової',
 
                        KB_BUTTON_FIND_PARTNERS: '🔎 Пошук контрагента',
                        KB_BUTTON_SEND_INFORMATION_PARTNERS: 'Вивести інформацію про контрагнета',
@@ -59,7 +62,8 @@ class Texts:
                        KB_BUTTON_CONTACT_PERSON_CANCELED: 'Не створювати подію',
                        KB_BUTTON_CONTACT_PERSON_NO: 'Без контактної особи',
 
-                       KB_BUTTON_SEND_ADM: 'Відправити запит адміністратору'
+                       KB_BUTTON_SEND_ADM: 'Відправити запит адміністратору',
+                       KB_BUTTON_QR_DOCUMENTS: 'Відмітка отримання видаткової'
                        }
 
     @classmethod

@@ -13,6 +13,7 @@ from .keyboards import Keyboards
 from .lookups import *
 
 from ..request_from_1c import Http1c
+from ..image import ImageQR
 
 from ..configs import USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADDRESS
 from ..configs import Texts
@@ -75,15 +76,15 @@ class Bot1c(TeleBot):
     @staticmethod
     def generate_start_kb(user: User):
         kb = ReplyKeyboardMarkup(resize_keyboard=True)
-        buttons = [KeyboardButton(button) for button in Keyboards.START_KB_AUTH.values()]
+        buttons = [KeyboardButton(button) for button in Keyboards.get_kb(Keyboards.START_KB_AUTH, user.roles)]
         kb.add(*buttons)
 
         return kb
 
     @staticmethod
-    def generate_send_admin_kb():
+    def generate_send_admin_kb(user):
         kb = ReplyKeyboardMarkup(resize_keyboard=True)
-        buttons = [KeyboardButton(button) for button in Keyboards.START_KB_NO_AUTH.values()]
+        buttons = [KeyboardButton(button) for button in Keyboards.get_kb(Keyboards.START_KB_NO_AUTH, user.roles)]
         kb.add(*buttons)
 
         return kb
@@ -132,7 +133,7 @@ class Bot1c(TeleBot):
     # Послати користувачу повідомлення, що він не аутентифікований.
     # Можливо відправити клавіатуру на запит про підтвердження дозволу в 1с
     def send_not_authentication(self, user: User, text: str):
-        kb = Bot1c.generate_send_admin_kb()
+        kb = Bot1c.generate_send_admin_kb(user)
         self.send_message(user.user_id, text, reply_markup=kb)
 
     def process_only_message(self, user: User, text_message):
@@ -370,6 +371,40 @@ class Bot1c(TeleBot):
         for event in information_events:
             format_information = Bot1c.get_formatting_information_from_events(event)
             self.send_message(user.user_id, format_information, parse_mode='html')
+
+    #--------------------------------------------------
+    def send_start_qr_documents(self, user: User):
+        user.user_to_status(StatusOperation.WAIT_QR_DOCUMENTS)
+
+        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_SEND_QR_IMAGE),
+                          reply_markup=ReplyKeyboardRemove())
+
+        # kb = self.generate_start_kb(user)
+        # self.send_message(user.user_id, 'Не реалізовано', reply_markup=kb)
+
+    def start_qr_processing(self, user: User, message):
+        file_info = self.get_file(message.photo[len(message.photo) - 1].file_id)
+        downloaded_file = self.download_file(file_info.file_path)
+
+        image_qr = ImageQR(byte_string=downloaded_file)
+
+        self.delete_message(user.user_id, message.message_id)
+
+        barcode_data = image_qr.decode_barcodes()
+        if not barcode_data:
+            #не вдалося розпізнати
+            pass
+
+        # Треба запустити Обработку в 1c
+        # 1. Якщло все співпадає, то відмітити позначкою
+        # 2. якщо ні то ругнутися
+
+
+
+        self.send_message(user.user_id, 'Получено')
+
+
+
 
 
 if __name__ == '__main__':

@@ -50,6 +50,11 @@ class User(me.Document):
         self.role = list(message_1c.get("Role", {}).keys())
         # self.save() - Зайве. Нам ця інформація потрібна тільки для сеансу. Між сеансами зберігати не потрібно
 
+    @property
+    def roles(self):
+        return set(self.role)
+
+
 
 class Partners(me.Document):
     id_client = me.StringField(unique=True, required=True, max_length=9)
