@@ -93,3 +93,11 @@ class Http1c:
         payload = {"username": user.name, "id": id_partners}
 
         return self.get_request(url, payload)
+
+    def post_document(self, user: User, barcode_data):
+        # /{NameBot}/{User}/event
+        url = self.get_url(user, "document_marked")
+
+        data = {'text_qr': barcode_data}
+
+        return self.post_request(url, {}, data)

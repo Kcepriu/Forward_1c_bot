@@ -372,39 +372,76 @@ class Bot1c(TeleBot):
             format_information = Bot1c.get_formatting_information_from_events(event)
             self.send_message(user.user_id, format_information, parse_mode='html')
 
-    #--------------------------------------------------
     def send_start_qr_documents(self, user: User):
         user.user_to_status(StatusOperation.WAIT_QR_DOCUMENTS)
 
         self.send_message(user.user_id, Texts.get_body(Texts.TEXT_SEND_QR_IMAGE),
                           reply_markup=ReplyKeyboardRemove())
 
-        # kb = self.generate_start_kb(user)
-        # self.send_message(user.user_id, 'Не реалізовано', reply_markup=kb)
-
-    def start_qr_processing(self, user: User, message):
+    def get_information_with_qr(self, message):
         file_info = self.get_file(message.photo[len(message.photo) - 1].file_id)
         downloaded_file = self.download_file(file_info.file_path)
 
         image_qr = ImageQR(byte_string=downloaded_file)
 
-        self.delete_message(user.user_id, message.message_id)
-
         barcode_data = image_qr.decode_barcodes()
+
+        return barcode_data
+
+    def get_information_with_1c(self, user: User, barcode_data):
+        try:
+            result = http_1c_services.post_document(user, barcode_data)
+
+            if self.not_access(result):
+                self.send_message(user.user_id, Texts.get_body(Texts.NO_ACCESS),
+                                  reply_markup=ReplyKeyboardRemove())
+                return
+
+        except NoConnectionWith1c:
+            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            return
+        except ApiTelegramException:
+            return
+
+        return result
+
+    def start_qr_processing(self, user: User, message):
+        barcode_data = self.get_information_with_qr(message)
+
+        self.delete_message(user.user_id, message.message_id)
+        user.user_to_status(StatusOperation.NOT_OPERATION)
+
         if not barcode_data:
-            #не вдалося розпізнати
-            pass
+            self.send_message(user.user_id, Texts.get_body(Texts.TEXT_FAILED_QR_PROCESSING),
+                              reply_markup=ReplyKeyboardRemove())
+            return
 
-        # Треба запустити Обработку в 1c
-        # 1. Якщло все співпадає, то відмітити позначкою
-        # 2. якщо ні то ругнутися
+        compare_answer = self.get_information_with_1c(user, barcode_data)
+        self.output_information_compare(user, compare_answer)
+
+    def output_information_compare(self, user: User, information):
+        if not information:
+            # Вже ругнулося. Просто виходимо
+            return
+
+        answer = information.get('DocumentMarked')
+        if not answer:
+            # error
+            return
+
+        if answer.result:
+            # Все ок. сказати що відмічено
+            self.send_message(user.user_id, 'Получено')
+        else:
+            # сказати про помилку
+            if answer.array_differences:
+                # вивеси дані про дані порівняння
+                pass
 
 
 
-        self.send_message(user.user_id, 'Получено')
-
-
-
+# Треба написати обработку результата з 1с. Там поже приходити Access=False. Значить 1с заборонив виконувати цю операцію
+# Це після всіх звернень до 1с крім автонтифікації
 
 
 if __name__ == '__main__':

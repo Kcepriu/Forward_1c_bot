@@ -19,6 +19,7 @@ class Texts:
     TEXT_CHOICE_CONTACT_PERSON = 'TEXT_CHOICE_CONTACT_PERSON'
     TEXT_OPERATION_FROM_PARTNERS = 'TEXT_OPERATION_FROM_PARTNERS'
     TEXT_SEND_QR_IMAGE = 'TEXT_SEND_QR_IMAGE'
+    TEXT_FAILED_QR_PROCESSING = 'TEXT_FAILED_QR_PROCESSING'
 
     KB_BUTTON_FIND_PARTNERS = 'KB_BUTTON_FIND_PARTNERS'
     KB_BUTTON_FIND_PRODUCT = 'KB_BUTTON_FIND_PRODUCT'
@@ -52,6 +53,7 @@ class Texts:
                        TEXT_CHOICE_CONTACT_PERSON: '👇 Виберіть контактну особу, для створення події',
                        TEXT_OPERATION_FROM_PARTNERS: 'Операції з контрагентом:',
                        TEXT_SEND_QR_IMAGE: 'Відправте QR код видаткової',
+                       TEXT_FAILED_QR_PROCESSING: 'Не вдалося розпізнати QR код',
 
                        KB_BUTTON_FIND_PARTNERS: '🔎 Пошук контрагента',
                        KB_BUTTON_SEND_INFORMATION_PARTNERS: 'Вивести інформацію про контрагнета',
@@ -63,7 +65,7 @@ class Texts:
                        KB_BUTTON_CONTACT_PERSON_NO: 'Без контактної особи',
 
                        KB_BUTTON_SEND_ADM: 'Відправити запит адміністратору',
-                       KB_BUTTON_QR_DOCUMENTS: 'Відмітка отримання видаткової'
+                       KB_BUTTON_QR_DOCUMENTS: 'QR видаткової'
                        }
 
     @classmethod
