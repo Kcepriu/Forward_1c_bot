@@ -16,9 +16,10 @@ from ..request_from_1c import Http1c
 from ..image import ImageQR
 
 from ..configs import USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADDRESS
-from ..configs import Texts
-from ..configs import TEMPLATE_INFORMATION, TEMPLATE_EVENTS
+from ..configs import texts
+from ..configs import TEMPLATE_INFORMATION, TEMPLATE_EVENTS, TEMPLATE_DIFFERENCE
 from ..configs import NoConnectionWith1c, NoAuthentication, NoValidationData
+from ..configs import TextAnswer1c
 
 http_1c_services = Http1c(USER_1C, PASSWD_1C, NAME_BOT, NAME_SERVER, ADDITIONAL_ADDRESS)
 
@@ -43,6 +44,12 @@ class Bot1c(TeleBot):
         return format_text
 
     @staticmethod
+    def get_formatting_information_from_difference(information):
+        tm = Template(TEMPLATE_DIFFERENCE)
+        format_text = tm.render(message=information)
+        return format_text
+
+    @staticmethod
     def split_formatting_information(format_text):
         list_str = []
         while format_text:
@@ -63,7 +70,7 @@ class Bot1c(TeleBot):
     def generate_and_send_start_kb(self, user: User):
         user.user_to_status(StatusOperation.NOT_OPERATION)
         kb = self.generate_start_kb(user)
-        result = self.send_message(user.user_id, Texts.get_body(Texts.TEXT_START), reply_markup=kb)
+        result = self.send_message(user.user_id, texts(texts.TEXT_START), reply_markup=kb)
 
         return result.message_id
 
@@ -91,12 +98,12 @@ class Bot1c(TeleBot):
 
     def send_start_find_clients(self, user: User):
         user.user_to_status(StatusOperation.FIND_CLIENTS)
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_START_FIND_PARTNERS),
+        self.send_message(user.user_id, texts(texts.TEXT_START_FIND_PARTNERS),
                           reply_markup=ReplyKeyboardRemove())
 
     def send_start_find_tovar(self, user: User):
         user.user_to_status(StatusOperation.NOT_OPERATION)
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_NOT_IMPLEMENTED),
+        self.send_message(user.user_id, texts(texts.TEXT_NOT_IMPLEMENTED),
                           reply_markup=ReplyKeyboardRemove())
         self.generate_and_send_start_kb(user)
 
@@ -119,7 +126,7 @@ class Bot1c(TeleBot):
             user.set_info_from_user(message_1c)
 
         except (NoConnectionWith1c, NoValidationData):
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             raise NoAuthentication
 
         if get_only_info:
@@ -127,7 +134,7 @@ class Bot1c(TeleBot):
             return
         elif not user.authentication:
             # користувая не включений в 1с
-            self.send_not_authentication(user, Texts.get_body(Texts.NO_AUTH))
+            self.send_not_authentication(user, texts(texts.NO_AUTH))
             raise NoAuthentication
 
     # Послати користувачу повідомлення, що він не аутентифікований.
@@ -145,13 +152,13 @@ class Bot1c(TeleBot):
 
         elif user.status_operation == StatusOperation.CHOICE_CONTACT_PERSON:
             # Треба сказати що треба вибрати контактну особу
-            self.send_message(user.user_id, Texts.get_body(Texts.TEXT_CHOICE_CONTACT_PERSON),
+            self.send_message(user.user_id, texts(texts.TEXT_CHOICE_CONTACT_PERSON),
                               reply_markup=ReplyKeyboardRemove())
             return False
 
         else:
             # Не знаходиться ні в одній із операцій. сказати про це
-            # self.send_message(user.user_id, Texts.get_body(Texts.TEXT_NO_OPERATION),
+            # self.send_message(user.user_id, texts(texts.TEXT_NO_OPERATION),
             #                   reply_markup=ReplyKeyboardRemove())
 
             # поки зроблю щоб щукало контрагента
@@ -168,12 +175,12 @@ class Bot1c(TeleBot):
             except ApiTelegramException:
                 pass
 
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_MESSAGE_ADMINS_SEND),
+        self.send_message(user.user_id, texts(texts.TEXT_MESSAGE_ADMINS_SEND),
                           reply_markup=ReplyKeyboardRemove())
 
     def send_admin_message(self, user: User, admins):
-        text = f'{Texts.get_body(Texts.TEXT_USER)} {user.name}  (id={user.user_id}) ' \
-               f'{Texts.get_body(Texts.TEXT_ASKS_AUTH)}'
+        text = f'{texts(texts.TEXT_USER)} {user.name}  (id={user.user_id}) ' \
+               f'{texts(texts.TEXT_ASKS_AUTH)}'
 
         for admin in admins:
             self.send_message(int(admin), text)
@@ -185,12 +192,12 @@ class Bot1c(TeleBot):
         try:
             partners_1c = http_1c_services.get_find_partner(user, text_message)
             if self.not_access(partners_1c):
-                self.send_message(user.user_id, Texts.get_body(Texts.NO_ACCESS),
+                self.send_message(user.user_id, texts(texts.NO_ACCESS),
                                   reply_markup=ReplyKeyboardRemove())
                 return
 
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
         except ApiTelegramException:
             return
@@ -198,7 +205,7 @@ class Bot1c(TeleBot):
         partners = partners_1c.get('partners')
 
         if not partners:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_FIND_RESULT),
+            self.send_message(user.user_id, texts(texts.NO_FIND_RESULT),
                               reply_markup=ReplyKeyboardRemove())
             return
 
@@ -212,12 +219,12 @@ class Bot1c(TeleBot):
             result = http_1c_services.post_event(user, text_message)
 
             if self.not_access(result):
-                self.send_message(user.user_id, Texts.get_body(Texts.NO_ACCESS),
+                self.send_message(user.user_id, texts(texts.NO_ACCESS),
                                   reply_markup=ReplyKeyboardRemove())
                 return
 
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
         except ApiTelegramException:
             return
@@ -225,10 +232,10 @@ class Bot1c(TeleBot):
         user.user_to_status(StatusOperation.NOT_OPERATION)
 
         if not result.get('ЕventСreated', False):
-            self.send_message(user.user_id, Texts.get_body(Texts.TEXT_EVENT_NOT_CREATED))
+            self.send_message(user.user_id, texts(texts.TEXT_EVENT_NOT_CREATED))
             return
 
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_EVENT_CREATED))
+        self.send_message(user.user_id, texts(texts.TEXT_EVENT_CREATED))
 
     def send_list_partners(self, user: User, partners):
         kb = InlineKeyboardMarkup(row_width=1)
@@ -241,7 +248,7 @@ class Bot1c(TeleBot):
 
         kb.add(*buttons)
 
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_FIND_CLIENTS),
+        self.send_message(user.user_id, texts(texts.TEXT_FIND_CLIENTS),
                           reply_markup=kb)
 
     def start_send_information_partners(self, user: User, id_client, message_id):
@@ -250,7 +257,7 @@ class Bot1c(TeleBot):
         try:
             partners_1c = http_1c_services.get_information_partner(user, id_client)
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
 
         information_partner = partners_1c.get('partner')
@@ -258,22 +265,22 @@ class Bot1c(TeleBot):
 
         # Інформація відсутня
         if not format_information:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_FIND_INFORMATION),
+            self.send_message(user.user_id, texts(texts.NO_FIND_INFORMATION),
                               reply_markup=ReplyKeyboardRemove())
             self.generate_and_send_start_kb(user)
             return
-
         self.send_information_partners(user, id_client, format_information)
 
-    def generate_keyboard_partner(self, id_client):
+    @staticmethod
+    def generate_keyboard_partner(id_client):
         kb = InlineKeyboardMarkup(row_width=2)
 
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_PARTNER_GET_EVENT),
+        kb.add(InlineKeyboardButton(texts(texts.KB_BUTTON_PARTNER_GET_EVENT),
                                     callback_data=f'{HANDLER_PARTNER_GET_EVENT}{SEPARATOR}{id_client}'))
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_COMPANY_GET_EVENT),
+        kb.add(InlineKeyboardButton(texts(texts.KB_BUTTON_COMPANY_GET_EVENT),
                                     callback_data=f'{HANDLER_COMPANY_GET_EVENT}{SEPARATOR}{id_client}'))
 
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CREATE_EVENT),
+        kb.add(InlineKeyboardButton(texts(texts.KB_BUTTON_CREATE_EVENT),
                                     callback_data=f'{HANDLER_EVENT}{SEPARATOR}{id_client}'))
         return kb
 
@@ -284,14 +291,14 @@ class Bot1c(TeleBot):
         for elem in list_information:
             self.send_message(user.user_id, elem,  parse_mode='html')
 
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_OPERATION_FROM_PARTNERS), reply_markup=kb)
+        self.send_message(user.user_id, texts(texts.TEXT_OPERATION_FROM_PARTNERS), reply_markup=kb)
 
     # Отримуємо контактні особи контрагента
     def get_contact_person(self, user: User, id_client):
         try:
             information_1c = http_1c_services.get_contact_person(user, id_client)
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
 
         return information_1c.get('contact_person')
@@ -304,14 +311,14 @@ class Bot1c(TeleBot):
             return
 
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CONTACT_PERSON_NO),
+        kb.add(InlineKeyboardButton(texts(texts.KB_BUTTON_CONTACT_PERSON_NO),
                                     callback_data=f'{HANDLER_CONTACT_PERSON}{SEPARATOR}{id_client}{SEPARATOR}EMPTY'))
 
         for person in contact_persons:
             kb.add(InlineKeyboardButton(person.get('name'),
                         callback_data=f'{HANDLER_CONTACT_PERSON}{SEPARATOR}{id_client}{SEPARATOR}{person.get("id")}'))
 
-        kb.add(InlineKeyboardButton(Texts.get_body(Texts.KB_BUTTON_CONTACT_PERSON_CANCELED),
+        kb.add(InlineKeyboardButton(texts(texts.KB_BUTTON_CONTACT_PERSON_CANCELED),
                                     callback_data=f'{HANDLER_CONTACT_PERSON}{SEPARATOR}CANCELED{SEPARATOR}EMPTY'))
 
         return kb
@@ -330,13 +337,13 @@ class Bot1c(TeleBot):
     # Відпраляємо у чат повідомлення що треба вводити тексчт події
     def send_message_create_event(self, user: User, id_client, id_contact_person=''):
         user.user_to_status(StatusOperation.CREATE_EVENT, id_client, id_contact_person)
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_START_CREATED_EVENT),
+        self.send_message(user.user_id, texts(texts.TEXT_START_CREATED_EVENT),
                           reply_markup=ReplyKeyboardRemove())
 
     # Відправляємо кнопки вибору контаткни осіб у чат
     def send_keyboard_contact_person(self, user: User, id_client, kb: InlineKeyboardMarkup):
         user.user_to_status(StatusOperation.CHOICE_CONTACT_PERSON, id_client)
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_CHOICE_CONTACT_PERSON),
+        self.send_message(user.user_id, texts(texts.TEXT_CHOICE_CONTACT_PERSON),
                           reply_markup=kb)
 
     # Тикнули по кнопці контакної особи контрагоента
@@ -356,14 +363,14 @@ class Bot1c(TeleBot):
         try:
             events_1c = http_1c_services.get_events(user, id_client, company)
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
 
         information_events = events_1c.get('events')
 
         # Інформація відсутня
         if not information_events:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_FIND_EVENTS),
+            self.send_message(user.user_id, texts(texts.NO_FIND_EVENTS),
                               reply_markup=ReplyKeyboardRemove())
             self.generate_and_send_start_kb(user)
             return
@@ -375,7 +382,7 @@ class Bot1c(TeleBot):
     def send_start_qr_documents(self, user: User):
         user.user_to_status(StatusOperation.WAIT_QR_DOCUMENTS)
 
-        self.send_message(user.user_id, Texts.get_body(Texts.TEXT_SEND_QR_IMAGE),
+        self.send_message(user.user_id, texts(texts.TEXT_SEND_QR_IMAGE),
                           reply_markup=ReplyKeyboardRemove())
 
     def get_information_with_qr(self, message):
@@ -393,12 +400,12 @@ class Bot1c(TeleBot):
             result = http_1c_services.post_document(user, barcode_data)
 
             if self.not_access(result):
-                self.send_message(user.user_id, Texts.get_body(Texts.NO_ACCESS),
+                self.send_message(user.user_id, texts(texts.NO_ACCESS),
                                   reply_markup=ReplyKeyboardRemove())
                 return
 
         except NoConnectionWith1c:
-            self.send_message(user.user_id, Texts.get_body(Texts.NO_CONNECT))
+            self.send_message(user.user_id, texts(texts.NO_CONNECT))
             return
         except ApiTelegramException:
             return
@@ -412,12 +419,13 @@ class Bot1c(TeleBot):
         user.user_to_status(StatusOperation.NOT_OPERATION)
 
         if not barcode_data:
-            self.send_message(user.user_id, Texts.get_body(Texts.TEXT_FAILED_QR_PROCESSING),
+            self.send_message(user.user_id, texts(texts.TEXT_FAILED_QR_PROCESSING),
                               reply_markup=ReplyKeyboardRemove())
-            return
+        else:
+            compare_answer = self.get_information_with_1c(user, barcode_data)
+            self.output_information_compare(user, compare_answer)
 
-        compare_answer = self.get_information_with_1c(user, barcode_data)
-        self.output_information_compare(user, compare_answer)
+        self.generate_and_send_start_kb(user)
 
     def output_information_compare(self, user: User, information):
         if not information:
@@ -426,27 +434,42 @@ class Bot1c(TeleBot):
 
         answer = information.get('DocumentMarked')
         if not answer:
-            # error
+            self.send_message(user.user_id, texts(texts.TEXT_UNKNOWN_ERROR))
             return
 
-        if answer.result:
-            # Все ок. сказати що відмічено
-            self.send_message(user.user_id, 'Получено')
+        number_document = answer.get('data_document', {}).get('number', '')
+
+        if answer.get('result'):
+            self.send_message(user.user_id,
+                                f'{texts(texts.TEXT_FOR_DOCUMENT)} №{number_document} {texts(texts.TEXT_FLAG_IN_SET)}')
+
         else:
-            # сказати про помилку
-            if answer.array_differences:
-                # вивеси дані про дані порівняння
-                pass
+            self.send_message_compare(user, answer)
 
+    def send_message_compare(self, user, answer):
+        text_error = TextAnswer1c.get_text_structure('error_1c_qr',
+                                                     answer.get('type_error', ""),
+                                                     texts(texts.TEXT_UNKNOWN_ERROR))
+        self.send_message(user.user_id, text_error)
 
+        if answer.get('array_differences'):
+            array_differences = self.change_name_prop(answer.get('array_differences', []))
+            format_information = Bot1c.get_formatting_information_from_difference(array_differences)
 
-# Треба написати обработку результата з 1с. Там поже приходити Access=False. Значить 1с заборонив виконувати цю операцію
-# Це після всіх звернень до 1с крім автонтифікації
+            self.send_message(user.user_id, format_information, parse_mode='html')
+
+            self.send_message(user.user_id, texts(texts.TEXT_FLAG_NO_SET))
+
+    @staticmethod
+    def change_name_prop(array_differences):
+        # Змінити значення параметру на коректне значення із текстів
+
+        for differences in array_differences:
+            name_prop = differences.get('name_prop')
+            differences['name_prop'] = TextAnswer1c.get_text_structure('type_difference', name_prop)
+
+        return array_differences
 
 
 if __name__ == '__main__':
     pass
-
-# result = HTTP_1C.get_autentification_1c(user)
-# result = HTTP_1C.get_find_contrahents(user, "веранда")
-# result = htt_1s_services.get_information_contrahent(user, "000069431")

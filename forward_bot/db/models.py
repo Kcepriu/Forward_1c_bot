@@ -55,7 +55,6 @@ class User(me.Document):
         return set(self.role)
 
 
-
 class Partners(me.Document):
     id_client = me.StringField(unique=True, required=True, max_length=9)
     name = me.StringField(max_length=255)

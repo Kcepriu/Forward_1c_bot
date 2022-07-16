@@ -1,4 +1,4 @@
-from ..configs import Texts
+from ..configs import texts
 
 
 class Buttons:
@@ -8,10 +8,10 @@ class Buttons:
     QR_DOCUMENTS = 'QR_DOCUMENTS'
 
     ALL_BUTTON = {
-        FIND_PARTNERS: Texts.get_body(Texts.KB_BUTTON_FIND_PARTNERS),  # Пошук контрагентів
-        FIND_PRODUCT: Texts.get_body(Texts.KB_BUTTON_FIND_PRODUCT),  # Пошук номенклатури
-        SEND_ADMIN: Texts.get_body(Texts.KB_BUTTON_SEND_ADM),  # Відправити запит адміністратору'
-        QR_DOCUMENTS: Texts.get_body(Texts.KB_BUTTON_QR_DOCUMENTS)
+        FIND_PARTNERS: texts(texts.KB_BUTTON_FIND_PARTNERS),  # Пошук контрагентів
+        FIND_PRODUCT: texts(texts.KB_BUTTON_FIND_PRODUCT),  # Пошук номенклатури
+        SEND_ADMIN: texts(texts.KB_BUTTON_SEND_ADM),  # Відправити запит адміністратору'
+        QR_DOCUMENTS: texts(texts.KB_BUTTON_QR_DOCUMENTS)
     }
 
     def __call__(self, name_button):

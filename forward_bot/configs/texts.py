@@ -20,6 +20,10 @@ class Texts:
     TEXT_OPERATION_FROM_PARTNERS = 'TEXT_OPERATION_FROM_PARTNERS'
     TEXT_SEND_QR_IMAGE = 'TEXT_SEND_QR_IMAGE'
     TEXT_FAILED_QR_PROCESSING = 'TEXT_FAILED_QR_PROCESSING'
+    TEXT_UNKNOWN_ERROR = 'TEXT_UNKNOWN_ERROR'
+    TEXT_FOR_DOCUMENT = 'TEXT_FOR_DOCUMENT'
+    TEXT_FLAG_IN_SET = 'TEXT_FLAG_IN_SET'
+    TEXT_FLAG_NO_SET = 'TEXT_FLAG_NO_SET'
 
     KB_BUTTON_FIND_PARTNERS = 'KB_BUTTON_FIND_PARTNERS'
     KB_BUTTON_FIND_PRODUCT = 'KB_BUTTON_FIND_PRODUCT'
@@ -32,6 +36,17 @@ class Texts:
     KB_BUTTON_CONTACT_PERSON_CANCELED = 'KB_BUTTON_CONTACT_PERSON_CANCELED'
     KB_BUTTON_CONTACT_PERSON_NO = 'KB_BUTTON_CONTACT_PERSON_NO'
     KB_BUTTON_QR_DOCUMENTS = 'KB_BUTTON_QR_DOCUMENTS'
+
+    ERROR_1C_QR_STRUCTURE = 'ERROR_1C_QR_STRUCTURE'
+    ERROR_1C_QR_COMPARISON = 'ERROR_1C_QR_COMPARISON'
+    ERROR_1C_QR_MARK_SETTING = 'ERROR_1C_QR_MARK_SETTING'
+    ERROR_1C_QR_FIND_DOCUMENT = 'ERROR_1C_QR_FIND_DOCUMENT'
+    ERROR_1C_QR_FIND_PARTNER = 'ERROR_1C_QR_FIND_PARTNER'
+
+    TYPE_DIFFERENCE_1C_NUMBER = 'TYPE_DIFFERENCE_1C_NUMBER'
+    TYPE_DIFFERENCE_1C_SUMMA = 'TYPE_DIFFERENCE_1C_SUMMA'
+    TYPE_DIFFERENCE_1C_DATE = 'TYPE_DIFFERENCE_1C_DATE'
+    TYPE_DIFFERENCE_1C_PARTNER = 'TYPE_DIFFERENCE_1C_PARTNER'
 
     TITLES_CONSTANT = {NO_CONNECT: 'Не вдалося зʼєднатися з 1с',
                        NO_AUTH: 'Про вас відсутні дані в 1с. Зверніться до адміністратора',
@@ -54,6 +69,10 @@ class Texts:
                        TEXT_OPERATION_FROM_PARTNERS: 'Операції з контрагентом:',
                        TEXT_SEND_QR_IMAGE: 'Відправте QR код видаткової',
                        TEXT_FAILED_QR_PROCESSING: 'Не вдалося розпізнати QR код',
+                       TEXT_UNKNOWN_ERROR: 'Невідома помилка',
+                       TEXT_FOR_DOCUMENT: 'Для документу',
+                       TEXT_FLAG_IN_SET: 'встановлено позначку отримання оригіналу',
+                       TEXT_FLAG_NO_SET: 'Помилка!!! Документ не відмічено.',
 
                        KB_BUTTON_FIND_PARTNERS: '🔎 Пошук контрагента',
                        KB_BUTTON_SEND_INFORMATION_PARTNERS: 'Вивести інформацію про контрагнета',
@@ -65,10 +84,28 @@ class Texts:
                        KB_BUTTON_CONTACT_PERSON_NO: 'Без контактної особи',
 
                        KB_BUTTON_SEND_ADM: 'Відправити запит адміністратору',
-                       KB_BUTTON_QR_DOCUMENTS: 'QR видаткової'
+                       KB_BUTTON_QR_DOCUMENTS: 'QR видаткової',
+
+                       ERROR_1C_QR_STRUCTURE: 'Невірна структура QR',
+                       ERROR_1C_QR_COMPARISON: 'В 1с в даний документ внесено змінени. '
+                                               'Через це автоматичне відмітка не можлива.',
+                       ERROR_1C_QR_MARK_SETTING: 'Не вдалося відмітити документ в 1с',
+                       ERROR_1C_QR_FIND_DOCUMENT: 'В 1с не вдалося знайти такий документ',
+                       ERROR_1C_QR_FIND_PARTNER: 'В 1с не вдалося знайти контрагента, вказаново в QR',
+
+                       TYPE_DIFFERENCE_1C_NUMBER: 'Відрізняється номер документу',
+                       TYPE_DIFFERENCE_1C_SUMMA: 'Відрізняється сума документу',
+                       TYPE_DIFFERENCE_1C_DATE: 'Відрізняється дата документу',
+                       TYPE_DIFFERENCE_1C_PARTNER: 'Відрізняється контрагент'
                        }
 
     @classmethod
     def get_body(cls, title_):
         _text = cls.TITLES_CONSTANT.get(title_, "")
         return _text
+
+    def __call__(self, title_):
+        return self.get_body(title_)
+
+
+texts = Texts()

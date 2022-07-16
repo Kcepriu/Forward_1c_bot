@@ -8,6 +8,7 @@ from telebot.types import Update
 
 bot_app = Blueprint('bot', __name__)
 
+
 @bot_app.route(WEBHOOK_PREFIX, methods=['POST'])
 def webhook():
     if request.headers.get('content-type') == 'application/json':

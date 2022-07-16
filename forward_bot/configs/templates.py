@@ -26,3 +26,11 @@ TEMPLATE_EVENTS = '''
 <strong>Текст події:</strong>
 {{message.text_event}}
 '''
+
+TEMPLATE_DIFFERENCE = ''' 
+{% for inf in message -%}
+<strong>   {{inf.name_prop}}:</strong>
+<strong>В QR:</strong> {{inf.old_value}}
+<strong>В 1с:</strong> {{inf.new_value}}
+{% endfor %}
+'''
