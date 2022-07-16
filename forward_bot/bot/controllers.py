@@ -1,5 +1,5 @@
 from flask import Blueprint
-from ..configs import WEBHOOK_PRIFIX
+from ..configs import WEBHOOK_PREFIX
 from .hendlers import bot_instance
 
 from flask import request, abort
@@ -8,7 +8,8 @@ from telebot.types import Update
 
 bot_app = Blueprint('bot', __name__)
 
-@bot_app.route(WEBHOOK_PRIFIX, methods=['POST'])
+
+@bot_app.route(WEBHOOK_PREFIX, methods=['POST'])
 def webhook():
     if request.headers.get('content-type') == 'application/json':
         json_string = request.get_data().decode('utf-8')
